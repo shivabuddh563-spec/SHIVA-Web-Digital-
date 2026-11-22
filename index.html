@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHIVA — Web Developer, Data Analyst & Digital Creator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-card: #0c0c0c;
+      --border: #1f1f1f;
+      --border-wire: rgba(255, 77, 0, 0.35);
+      --orange: #ff4d00;
+      --orange-glow: rgba(255, 77, 0, 0.25);
+      --text: #f5f5f5;
+      --muted: #8a8a8a;
+      --font-display: 'Anton', sans-serif;
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      line-height: 1.5;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* Wireframe Mode Toggle Effects */
+    body.wireframe-mode * {
+      outline: 1px dashed rgba(255, 77, 0, 0.35) !important;
+      background-color: rgba(255, 77, 0, 0.02) !important;
+    }
+    body.wireframe-mode img {
+      opacity: 0.25 !important;
+      filter: grayscale(100%) contrast(150%);
+    }
+
+    /* Top Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 6%;
+      background: rgba(5, 5, 5, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    .brand-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: #000;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-size: 1rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 28px;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: color 0.25s;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--orange);
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #4ade80;
+      background: rgba(74, 222, 128, 0.08);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+      padding: 6px 12px;
+      border-radius: 99px;
+    }
+
+    .status-pill span {
+      width: 7px;
+      height: 7px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    /* Multiplayer Cursors Overlay */
+    #cursor-stage {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 90;
+      overflow: hidden;
+    }
+
+    .mp-cursor {
+      position: absolute;
+      transition: transform 2.4s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    .mp-cursor svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .mp-tag {
+      margin-left: 12px;
+      margin-top: -4px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #000;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 6%;
+    }
+
+    /* Section Reveal / Blueprint Effect */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      padding-top: 110px;
+      padding-bottom: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mega-bg-text {
+      font-family: var(--font-display);
+      font-size: clamp(4.8rem, 16vw, 14.5rem);
+      line-height: 0.85;
+      color: var(--orange);
+      letter-spacing: -2px;
+      user-select: none;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr 0.45fr;
+      align-items: end;
+      gap: 24px;
+      margin-top: -3.2vw;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-intro .hello {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .hero-intro h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3.2rem, 6.2vw, 5.4rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-intro .role {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 2.3vw, 2rem);
+      color: var(--orange);
+      text-transform: uppercase;
+      margin-top: 10px;
+      line-height: 1.05;
+    }
+
+    .hero-intro p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      max-width: 410px;
+      margin-top: 14px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: #000;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.78rem;
+      padding: 12px 22px;
+      border-radius: 4px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--orange-glow);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 12px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .hero-location {
+      margin-top: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    /* Hero Portrait Blend */
+    .hero-portrait-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .hero-portrait-wrap img {
+      width: 100%;
+      max-width: 390px;
+      height: auto;
+      display: block;
+      mix-blend-mode: lighten;
+      mask-image: linear-gradient(to bottom, black 72%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 72%, transparent 100%);
+      filter: contrast(1.08);
+    }
+
+    /* Right Stats Column */
+    .hero-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-bottom: 16px;
+      border-left: 1px solid var(--border);
+      padding-left: 20px;
+    }
+
+    .stat-box .num {
+      font-family: var(--font-display);
+      font-size: 2.3rem;
+      color: var(--orange);
+      line-height: 1;
+    }
+
+    .stat-box .label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Section Headings */
+    section {
+      padding: 96px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sec-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+    }
+
+    .sec-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: 52px;
+    }
+
+    .sec-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+    }
+
+    .sec-title span {
+      color: var(--orange);
+    }
+
+    .sec-desc {
+      max-width: 380px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    /* WORK THAT SHIPS - PROJECTS GRID */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 32px;
+      position: relative;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .project-card:hover {
+      border-color: var(--orange);
+      transform: translateY(-4px);
+    }
+
+    .proj-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .proj-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      color: var(--orange);
+      line-height: 1;
+    }
+
+    .proj-badge {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .proj-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .proj-summary {
+      color: #cfcfcf;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    .proj-bullets {
+      list-style: none;
+      margin-bottom: 22px;
+    }
+
+    .proj-bullets li {
+      font-size: 0.84rem;
+      color: var(--muted);
+      padding-left: 16px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .proj-bullets li::before {
+      content: "▪";
+      color: var(--orange);
+      position: absolute;
+      left: 0;
+    }
+
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .tech-tags span {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text);
+      background: #141414;
+      border: 1px solid #262626;
+      padding: 4px 10px;
+      border-radius: 3px;
+    }
+
+    /* MARQUEE TICKER */
+    .marquee-wrap {
+      overflow: hidden;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      background: #080808;
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 48px;
+      width: max-content;
+      animation: marquee 22s linear infinite;
+    }
+
+    .marquee-track span {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .marquee-track span b {
+      color: var(--orange);
+      margin-right: 10px;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* BUILT FAST. SHIPPED REAL. */
+    .experience-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .big-metric {
+      font-family: var(--font-display);
+      font-size: clamp(4.5rem, 9vw, 7.5rem);
+      color: var(--orange);
+      line-height: 0.9;
+      margin-top: 24px;
+    }
+
+    .big-metric-sub {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .timeline-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .timeline-item {
+      border-left: 2px solid var(--orange);
+      padding-left: 20px;
+      padding-bottom: 8px;
+    }
+
+    .timeline-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .timeline-item h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .timeline-year {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--orange);
+    }
+
+    .timeline-org {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin: 4px 0 8px;
+    }
+
+    .timeline-item p {
+      font-size: 0.86rem;
+      color: #bcbcbc;
+    }
+
+    /* NOT JUST CODE. CODE THAT SHIPS. (SKILLS & DATA) */
+    .skills-matrix {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 32px;
+      margin-top: 40px;
+    }
+
+    .skill-table {
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .skill-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      gap: 16px;
+    }
+
+    .skill-row:last-child {
+      border-bottom: none;
+    }
+
+    .skill-cat {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--orange);
+      text-transform: uppercase;
+    }
+
+    .skill-vals {
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+
+    .orange-quote-card {
+      background: var(--orange);
+      color: #000;
+      padding: 36px 30px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .orange-quote-card blockquote {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      line-height: 1.02;
+      text-transform: uppercase;
+    }
+
+    .orange-quote-card .author {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-top: 24px;
+      text-transform: uppercase;
+    }
+
+    /* CONTACT SECTION */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr 0.7fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      text-decoration: none;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .contact-item:hover {
+      border-color: var(--orange);
+      transform: translateX(4px);
+    }
+
+    .contact-item span {
+      color: var(--orange);
+      font-size: 0.72rem;
+    }
+
+    .ship-slogan {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      text-align: right;
+    }
+
+    .ship-slogan span {
+      color: var(--orange);
+      display: block;
+    }
+
+    /* FLOATING DESIGN MODE BAR */
+    .floating-toolbar {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 120;
+      background: rgba(15, 15, 15, 0.92);
+      border: 1px solid #2a2a2a;
+      backdrop-filter: blur(10px);
+      padding: 6px 10px;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
+    }
+
+    .tool-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 6px 12px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tool-btn.active {
+      background: var(--orange);
+      color: #000;
+      font-weight: 700;
+    }
+
+    footer {
+      padding: 28px 6% 76px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        margin-top: 10px;
+      }
+      .hero-stats {
+        flex-direction: row;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding-left: 0;
+        padding-top: 20px;
+        justify-content: space-between;
+      }
+      .projects-grid,
+      .experience-grid,
+      .skills-matrix,
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+      .ship-slogan {
+        text-align: left;
+      }
+      nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Multiplayer Cursors -->
+  <div id="cursor-stage" aria-hidden="true"></div>
+
+  <!-- Top Navbar -->
+  <header>
+    <a href="#" class="brand-logo">
+      <div class="brand-dot">S</div>
+      <span>SHIVA.DEV</span>
+    </a>
+    <nav>
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="status-pill">
+      <span></span> AVAILABLE FOR PROJECTS
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="container">
+      <div class="mega-bg-text">PORTFOLIO</div>
+
+      <div class="hero-grid">
+        <div class="hero-intro reveal visible">
+          <div class="hello">Hello, I'm</div>
+          <h1>SHIVA.</h1>
+          <div class="role">WEB DEVELOPER, DATA ANALYST &amp; DIGITAL CREATOR</div>
+          <p>
+            I build fast, high-converting websites, Firebase web apps, data dashboards, and scroll-stopping social media reels that help businesses grow.
+          </p>
+          <div class="hero-actions">
+            <a href="https://wa.me/916398846458?text=Hi%20Shiva,%20I%20saw%20your%20portfolio%20and%20want%20to%20discuss%20a%20project." target="_blank" class="btn-primary">
+              START A PROJECT →
+            </a>
+            <a href="#work" class="btn-outline">VIEW WORK</a>
+          </div>
+          <div class="hero-location">BASED IN BISAULI, UP, INDIA • SHIVA DIGITAL STUDIO</div>
+        </div>
+
+        <!-- Portrait Photo (Save your edited photo as shiva.png in the same folder) -->
+        <div class="hero-portrait-wrap reveal visible">
+          <img src="shiva.png" alt="Shiva — Web Developer & Digital Creator" />
+        </div>
+
+        <!-- Right Metrics -->
+        <div class="hero-stats reveal visible">
+          <div class="stat-box">
+            <div class="num">04+</div>
+            <div class="label">LIVE APPS &amp; SITES</div>
+          </div>
+          <div class="stat-box">
+            <div class="num">100%</div>
+            <div class="label">MOBILE-FIRST SPEED</div>
+          </div>
+          <div class="stat-box">
+            <div class="num">24/7</div>
+            <div class="label">CLOUD &amp; FIREBASE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK THAT SHIPS -->
+  <section id="work">
+    <div class="container">
+      <div class="sec-tag">SELECTED WORK</div>
+      <div class="sec-header reveal">
+        <h2 class="sec-title">WORK THAT<br><span>SHIPS.</span></h2>
+        <p class="sec-desc">
+          Real websites, live QR ordering platforms, data analytics workflows, and brand content built for real clients and measurable growth.
+        </p>
+      </div>
+
+      <div class="projects-grid">
+        <!-- Project 01: Nancy Makeover -->
+        <article class="project-card reveal">
+          <div class="proj-top">
+            <div class="proj-num">01</div>
+            <span class="proj-badge">CLIENT • WEB + CONTENT</span>
+          </div>
+          <h3 class="proj-title">NANCY MAKEOVER</h3>
+          <p class="proj-summary">
+            Complete digital presence, visual lookbook website, and Instagram promotional reel production for a premier makeover &amp; beauty studio.
+          </p>
+          <ul class="proj-bullets">
+            <li>Designed a sleek, mobile-optimized service catalog &amp; bridal lookbook</li>
+            <li>Built direct WhatsApp booking &amp; inquiry flow for instant client leads</li>
+            <li>Produced high-retention 9:16 promotional reels &amp; ongoing brand updates</li>
+          </ul>
+          <div class="tech-tags">
+            <span>HTML5 / CSS3</span>
+            <span>JavaScript</span>
+            <span>GitHub Pages</span>
+            <span>VN Video Editor</span>
+          </div>
+        </article>
+
+        <!-- Project 02: SMILE-CAFE -->
+        <article class="project-card reveal">
+          <div class="proj-top">
+            <div class="proj-num">02</div>
+            <span class="proj-badge">WEB APP • REAL-TIME</span>
+          </div>
+          <h3 class="proj-title">SMILE-CAFE</h3>
+          <p class="proj-summary">
+            Contactless QR table ordering web application engineered for fast cafe service and live kitchen order management.
+          </p>
+          <ul class="proj-bullets">
+            <li>Instant table-specific digital menu accessible via QR scan without app install</li>
+            <li>Real-time order syncing powered by Firebase Realtime Database</li>
+            <li>Lightweight single-file architecture for ultra-fast loading on mobile data</li>
+          </ul>
+          <div class="tech-tags">
+            <span>Firebase Realtime DB</span>
+            <span>Single-File HTML</span>
+            <span>QR Workflow</span>
+            <span>UI/UX</span>
+          </div>
+        </article>
+
+        <!-- Project 03: Data Analytics & Business Intelligence -->
+        <article class="project-card reveal">
+          <div class="proj-top">
+            <div class="proj-num">03</div>
+            <span class="proj-badge">ANALYTICS • DASHBOARDS</span>
+          </div>
+          <h3 class="proj-title">SALES &amp; OPS ANALYTICS</h3>
+          <p class="proj-summary">
+            End-to-end data cleaning, SQL querying, and interactive KPI dashboards designed to turn raw business records into actionable insights.
+          </p>
+          <ul class="proj-bullets">
+            <li>Automated sales, inventory, and expense trackers in Excel &amp; Google Sheets</li>
+            <li>Structured SQL queries &amp; Python scripts for trend and margin analysis</li>
+            <li>Executive-ready visual reports built with Power BI &amp; Tableau</li>
+          </ul>
+          <div class="tech-tags">
+            <span>Excel / Sheets</span>
+            <span>SQL</span>
+            <span>Python</span>
+            <span>Power BI / Tableau</span>
+          </div>
+        </article>
+
+        <!-- Project 04: Social Media & Reel Growth Engine -->
+        <article class="project-card reveal">
+          <div class="proj-top">
+            <div class="proj-num">04</div>
+            <span class="proj-badge">CREATIVE • GROWTH</span>
+          </div>
+          <h3 class="proj-title">SHIVA DIGITAL &amp; REELS</h3>
+          <p class="proj-summary">
+            High-impact vertical storytelling, AI visual edits, and local lead-generation funnels tailored for brands and creators.
+          </p>
+          <ul class="proj-bullets">
+            <li>Dynamic pacing, sound design, and color grading for Instagram Reels</li>
+            <li>Custom AI visual creatives &amp; branded social media templates</li>
+            <li>Prototype-first digital strategy converting local views into paying customers</li>
+          </ul>
+          <div class="tech-tags">
+            <span>Reels Production</span>
+            <span>AI Visuals</span>
+            <span>Meta Funnels</span>
+            <span>Brand Strategy</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCROLLING TECH TICKER -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span><b>✦</b> HTML5 &amp; CSS3</span>
+      <span><b>✦</b> JAVASCRIPT</span>
+      <span><b>✦</b> FIREBASE REALTIME DB</span>
+      <span><b>✦</b> GITHUB PAGES</span>
+      <span><b>✦</b> SQL &amp; PYTHON</span>
+      <span><b>✦</b> POWER BI &amp; EXCEL</span>
+      <span><b>✦</b> VN VIDEO EDITOR</span>
+      <span><b>✦</b> UI/UX PROTOTYPING</span>
+      <span><b>✦</b> HTML5 &amp; CSS3</span>
+      <span><b>✦</b> JAVASCRIPT</span>
+      <span><b>✦</b> FIREBASE REALTIME DB</span>
+      <span><b>✦</b> GITHUB PAGES</span>
+      <span><b>✦</b> SQL &amp; PYTHON</span>
+      <span><b>✦</b> POWER BI &amp; EXCEL</span>
+      <span><b>✦</b> VN VIDEO EDITOR</span>
+      <span><b>✦</b> UI/UX PROTOTYPING</span>
+    </div>
+  </div>
+
+  <!-- BUILT FAST. SHIPPED REAL. -->
+  <section id="about">
+    <div class="container">
+      <div class="experience-grid">
+        <div class="reveal">
+          <div class="sec-tag">TRACK RECORD</div>
+          <h2 class="sec-title">BUILT FAST.<br><span>SHIPPED REAL.</span></h2>
+          <div class="big-metric">100%</div>
+          <div class="big-metric-sub">FOCUS ON PRACTICAL EXECUTION, SPEED &amp; REAL BUSINESS RESULTS.</div>
+        </div>
+
+        <div class="timeline-list reveal">
+          <div class="timeline-item">
+            <div class="timeline-top">
+              <h3>Founder &amp; Web Developer</h3>
+              <span class="timeline-year">2026 — PRESENT</span>
+            </div>
+            <div class="timeline-org">SHIVA Digital Services • Bisauli, UP</div>
+            <p>
+              Building custom websites, Firebase web applications, digital catalogs, and social media reel campaigns for local and regional businesses.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-top">
+              <h3>Data Analyst Trainee</h3>
+              <span class="timeline-year">2026 — PRESENT</span>
+            </div>
+            <div class="timeline-org">Excel • SQL • Python • Power BI / Tableau</div>
+            <p>
+              Analyzing business datasets, building automated reporting sheets, and designing visual KPI dashboards for data-driven decision making.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-top">
+              <h3>Content Creator &amp; Video Editor</h3>
+              <span class="timeline-year">ONGOING</span>
+            </div>
+            <div class="timeline-org">Shiva Ki Diary &amp; Client Brands</div>
+            <p>
+              Crafting engaging 9:16 vertical videos, AI visual edits, and brand storytelling reels optimized for high audience retention.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOT JUST CODE. CODE THAT SHIPS. -->
+  <section id="skills">
+    <div class="container">
+      <div class="sec-tag">CAPABILITIES &amp; STACK</div>
+      <div class="sec-header reveal">
+        <h2 class="sec-title">NOT JUST CODE.<br><span>CODE THAT SHIPS.</span></h2>
+        <p class="sec-desc">
+          Combining clean frontend engineering, real-time cloud databases, data analytics, and visual storytelling under one roof.
+        </p>
+      </div>
+
+      <div class="skills-matrix reveal">
+        <div class="skill-table">
+          <div class="skill-row">
+            <div class="skill-cat">WEB &amp; CLOUD</div>
+            <div class="skill-vals">HTML5, CSS3, Modern JavaScript, Firebase Realtime Database, GitHub Pages</div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-cat">DATA ANALYTICS</div>
+            <div class="skill-vals">Microsoft Excel, Google Sheets, SQL, Python (Pandas), Power BI, Tableau</div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-cat">DESIGN &amp; VIDEO</div>
+            <div class="skill-vals">UI/UX Wireframing, Responsive Web Design, VN Video Editor, AI Visual Generation</div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-cat">EDUCATION</div>
+            <div class="skill-vals">Bachelor of Arts (B.A.) — Mahatma Jyotiba Phule Rohilkhand University</div>
+          </div>
+        </div>
+
+        <div class="orange-quote-card">
+          <blockquote>
+            "SHIP FAST, KEEP IT CLEAN, AND BUILD THINGS PEOPLE ACTUALLY USE."
+          </blockquote>
+          <div class="author">— SHIVA • BISAULI, INDIA</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-grid reveal">
+        <div>
+          <div class="sec-tag">CONTACT</div>
+          <h2 class="sec-title">LET'S WORK<br><span>TOGETHER.</span></h2>
+          <p class="sec-desc" style="margin-top: 14px;">
+            Need a modern website, digital catalog, data dashboard, or promotional reels for your brand? Let's launch it.
+          </p>
+          <div style="margin-top: 24px;">
+            <a href="https://wa.me/916398846458?text=Hello%20Shiva,%20I%20want%20to%20start%20a%20project!" target="_blank" class="btn-primary">
+              MESSAGE ON WHATSAPP →
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-links">
+          <a href="tel:+916398846458" class="contact-item">
+            <div>+91 63988 46458</div>
+            <span>CALL DIRECT ↗</span>
+          </a>
+          <a href="https://wa.me/916398846458" target="_blank" class="contact-item">
+            <div>WhatsApp Business</div>
+            <span>CHAT NOW ↗</span>
+          </a>
+          <a href="https://github.com/shivabuddh563-spec" target="_blank" class="contact-item">
+            <div>github.com/shivabuddh563-spec</div>
+            <span>GITHUB ↗</span>
+          </a>
+        </div>
+
+        <div class="ship-slogan">
+          SHIP IT<span>FOR REAL.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>© 2026 SHIVA DIGITAL STUDIO. ALL RIGHTS RESERVED.</div>
+    <div>DESIGNED &amp; BUILT BY SHIVA</div>
+  </footer>
+
+  <!-- Bottom Figma-Style Mode Switcher -->
+  <div class="floating-toolbar">
+    <button class="tool-btn" id="btn-wireframe" onclick="setMode('wireframe')">WIREFRAME</button>
+    <button class="tool-btn active" id="btn-live" onclick="setMode('live')">LIVE VIEW</button>
+    <button class="tool-btn" onclick="toggleCursors()" id="btn-cursors">CURSORS: ON</button>
+  </div>
+
+  <script>
+    // 1. Scroll Reveal Animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // 2. Wireframe / Live Toggle
+    function setMode(mode) {
+      const wireBtn = document.getElementById('btn-wireframe');
+      const liveBtn = document.getElementById('btn-live');
+      if (mode === 'wireframe') {
+        document.body.classList.add('wireframe-mode');
+        wireBtn.classList.add('active');
+        liveBtn.classList.remove('active');
+      } else {
+        document.body.classList.remove('wireframe-mode');
+        liveBtn.classList.add('active');
+        wireBtn.classList.remove('active');
+      }
+    }
+
+    // Brief initial wireframe flash on load
+    window.addEventListener('DOMContentLoaded', () => {
+      setMode('wireframe');
+      setTimeout(() => setMode('live'), 900);
+    });
+
+    // 3. Figma Multiplayer Cursors Simulation
+    const cursorStage = document.getElementById('cursor-stage');
+    const collaborators = [
+      { name: 'SHIVA', color: '#ff4d00' },
+      { name: 'UI/UX', color: '#38bdf8' },
+      { name: 'DATA', color: '#4ade80' },
+      { name: 'CLIENT', color: '#facc15' }
+    ];
+
+    let cursorsActive = true;
+    const cursorEls = collaborators.map((c) => {
+      const el = document.createElement('div');
+      el.className = 'mp-cursor';
+      el.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="${c.color}">
+          <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.45 0 .67-.53.35-.85L6.35 2.86a.5.5 0 0 0-.85.35Z"/>
+        </svg>
+        <div class="mp-tag" style="background:${c.color}">${c.name}</div>
+      `;
+      cursorStage.appendChild(el);
+      return el;
+    });
+
+    function moveCursors() {
+      if (!cursorsActive) return;
+      const w = window.innerWidth - 120;
+      const h = window.innerHeight - 80;
+      cursorEls.forEach((el) => {
+        const x = Math.max(20, Math.floor(Math.random() * w));
+        const y = Math.max(70, Math.floor(Math.random() * h));
+        el.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    }
+
+    moveCursors();
+    setInterval(moveCursors, 2800);
+
+    function toggleCursors() {
+      cursorsActive = !cursorsActive;
+      cursorStage.style.display = cursorsActive ? 'block' : 'none';
+      document.getElementById('btn-cursors').textContent = cursorsActive ? 'CURSORS: ON' : 'CURSORS: OFF';
+    }
+  </script>
+</body>
+</html>
